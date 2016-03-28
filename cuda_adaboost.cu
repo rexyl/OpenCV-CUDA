@@ -157,7 +157,11 @@ int main(){
     cudaMemcpy(d_sum,sum_test,size,cudaMemcpyHostToDevice);
 
     vectorAdd<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_sum, numElements);
-    printf("Sum_test is %f\n", *sum_test);
+    for (int i = 0; i < nums; ++i)
+    {
+        printf("Sum_test is %f\n", sum_test[i]);    
+    }
+    
     cudaFree(d_A);
     cudaFree(d_B);
     /*****************************/
