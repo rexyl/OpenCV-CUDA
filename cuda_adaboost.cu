@@ -149,7 +149,8 @@ int main(){
     int threadsPerBlock = 256;
     int blocksPerGrid =(numElements + threadsPerBlock - 1) / threadsPerBlock;
     printf("CUDA kernel launch with %d blocks of %d threads\n", blocksPerGrid, threadsPerBlock);
-    float *sum_test = 0.0;
+    float *sum_test;
+    *sum_test = 0.0;
     vectorAdd<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, sum_test, numElements);
     printf("Sum_test is %f\n", *sum_test);
     cudaFree(d_A);
