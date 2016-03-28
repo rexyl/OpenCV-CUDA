@@ -59,7 +59,7 @@ void train(struct pars* pars_p){
 }
 
 struct pars* AdaBoost(int B,float *alpha){
-    struct pars* allPars = malloc(sizeof(struct pars)*B);
+    struct pars* allPars = (struct pars*)malloc(sizeof(struct pars)*B);
     for (int b=0;b<B;b++){
         struct pars pars;
         train(&pars);
@@ -83,10 +83,10 @@ struct pars* AdaBoost(int B,float *alpha){
 }
 
 int * agg_class(float *alpha,struct pars* allPars,int B){
-    float *res = malloc(sizeof(float)*nums);
+    float *res = (float *)malloc(sizeof(float)*nums);
     for (int z = 0; z < nums; ++z)
         res[z] = 0.0;
-    int *c_hat = malloc(sizeof(int)*nums);
+    int *c_hat = (int *)malloc(sizeof(int)*nums);
     for (int b = 0; b < B; ++b)
     {
         struct pars pars = allPars[b];
@@ -124,7 +124,7 @@ int main(){
     double time_spent;
     begin = clock();
     struct pars* ap;
-    float *alpha = malloc(sizeof(float)*5);;
+    float *alpha = (float *)malloc(sizeof(float)*5);;
     int *c_hat;
     ap = AdaBoost(5,alpha);
     c_hat = agg_class(alpha,ap,5);
