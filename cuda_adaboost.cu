@@ -22,7 +22,7 @@ vectorAdd(const float *A, const float *B, float *C, int numElements)
     //printf("blockDim.x is %d,blockIdx.x is %d, threadIdx.x %d \n", blockDim.x , blockIdx.x , threadIdx.x);
     if (i < numElements)
     {
-        C[i] = A[i] + B[i];
+        C[0] = A[i] + B[i];
         //printf("C is now %f\n", *C);
     }
 }
