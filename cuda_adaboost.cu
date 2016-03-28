@@ -149,7 +149,7 @@ int main(){
     int threadsPerBlock = 256;
     int blocksPerGrid =(numElements + threadsPerBlock - 1) / threadsPerBlock;
     printf("CUDA kernel launch with %d blocks of %d threads\n", blocksPerGrid, threadsPerBlock);
-    float *sum_test;
+    float *sum_test = (float*)malloc(sizeof(float));
     float *d_sum;
     *sum_test = 0.0;
     cudaMalloc((void **)&d_B, sizeof(float));
