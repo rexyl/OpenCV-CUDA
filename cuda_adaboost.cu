@@ -4,7 +4,7 @@
 #include <time.h>
 #include <math.h>
 #include <cuda_runtime.h>
-int nums = 2000,cols = 256;
+int nums = 200,cols = 256;
 float **usps;
 float *w;
 int *y;
@@ -19,7 +19,7 @@ __global__ void
 vectorAdd(const float *A, const float *B, float *C, int numElements)
 {
     int i = blockDim.x * blockIdx.x + threadIdx.x;
-    printf("blockDim.x is %d,blockIdx.x is %d, threadIdx.x %d \n", blockDim.x , blockIdx.x , threadIdx.x);
+    //printf("blockDim.x is %d,blockIdx.x is %d, threadIdx.x %d \n", blockDim.x , blockIdx.x , threadIdx.x);
     if (i < numElements)
     {
         (*C) += A[i] + B[i];
@@ -133,7 +133,7 @@ int main(){
     fclose(fp);fclose(fpcl);
 
     /***********cuda here********/
-    cudaError_t err = cudaSuccess;
+    //cudaError_t err = cudaSuccess;
     int numElements = nums;
     size_t size = numElements * sizeof(float);
     printf("[Vector addition of %d elements]\n", numElements);
@@ -150,8 +150,12 @@ int main(){
     int blocksPerGrid =(numElements + threadsPerBlock - 1) / threadsPerBlock;
     printf("CUDA kernel launch with %d blocks of %d threads\n", blocksPerGrid, threadsPerBlock);
     float *sum_test;
+    float *d_sum;
     *sum_test = 0.0;
-    vectorAdd<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, sum_test, numElements);
+    cudaMalloc((void **)&d_B, sizeof(float));
+    cudaMemcpy(sum_test,d_sum,sizeof(float),cudaMemcpyHostToDevice);
+
+    vectorAdd<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_sum, numElements);
     printf("Sum_test is %f\n", *sum_test);
     cudaFree(d_A);
     cudaFree(d_B);
