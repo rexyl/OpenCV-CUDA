@@ -137,7 +137,8 @@ int main(){
     int numElements = nums;
     size_t size = numElements * sizeof(float);
     printf("[Vector addition of %d elements]\n", numElements);
-    float h_A = usps[0],h_B = usps[1];
+    float *h_A = usps[0];
+    float *h_B = usps[1];
     float *d_A = NULL;
     cudaMalloc((void **)&d_A, size);
     float *d_B = NULL;
