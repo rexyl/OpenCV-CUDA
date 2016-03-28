@@ -15,11 +15,22 @@ struct pars{
     int return_m;
 };
 
+__global__ void
+vectorAdd(const float *A, const float *B, float *C, int numElements)
+{
+    int i = blockDim.x * blockIdx.x + threadIdx.x;
+    printf("blockDim.x is %d,blockIdx.x is %d, threadIdx.x %d \n", blockDim.x , blockIdx.x , threadIdx.x);
+    if (i < numElements)
+    {
+        (*C) += A[i] + B[i];
+    }
+}
+
 void train(struct pars* pars_p){
   int cur_j = 0,cur_theta = 0,cur_m = 0;
   float cur_min = 100000.0;
   for (int j = 0;j<cols;j++){
-    float *vec = usps[j];   //vec = as.vector(X[j])
+    float *vec = usps[j];
     float minimal = 100000.0;
     int cur_i = 0,sel_m= 0;
     for(int i=0;i<nums;i++){
@@ -120,6 +131,30 @@ int main(){
         }
     }
     fclose(fp);fclose(fpcl);
+
+    /***********cuda here********/
+    cudaError_t err = cudaSuccess;
+    int numElements = nums;
+    size_t size = numElements * sizeof(float);
+    printf("[Vector addition of %d elements]\n", numElements);
+    float *d_A = usps[0];
+    err = cudaMalloc((void **)&d_A, size);
+    float *d_B = usps[1];
+    err = cudaMalloc((void **)&d_B, size);
+    err = cudaMemcpy(d_A, h_A, size, cudaMemcpyHostToDevice);
+    err = cudaMemcpy(d_B, h_B, size, cudaMemcpyHostToDevice);
+
+    int threadsPerBlock = 256;
+    int blocksPerGrid =(numElements + threadsPerBlock - 1) / threadsPerBlock;
+    printf("CUDA kernel launch with %d blocks of %d threads\n", blocksPerGrid, threadsPerBlock);
+    float *sum_test = 0.0;
+    vectorAdd<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, sum_test, numElements);
+    printf("Sum_test is %f\n", *sum_test);
+    cudaFree(d_A);
+    cudaFree(d_B);
+    /*****************************/
+
+
     clock_t begin, end;
     double time_spent;
     begin = clock();
