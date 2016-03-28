@@ -137,12 +137,13 @@ int main(){
     int numElements = nums;
     size_t size = numElements * sizeof(float);
     printf("[Vector addition of %d elements]\n", numElements);
-    float *d_A = usps[0];
-    err = cudaMalloc((void **)&d_A, size);
-    float *d_B = usps[1];
-    err = cudaMalloc((void **)&d_B, size);
-    err = cudaMemcpy(d_A, h_A, size, cudaMemcpyHostToDevice);
-    err = cudaMemcpy(d_B, h_B, size, cudaMemcpyHostToDevice);
+    float h_A = usps[0],h_B = usps[1];
+    float *d_A = NULL;
+    cudaMalloc((void **)&d_A, size);
+    float *d_B = NULL;
+    cudaMalloc((void **)&d_B, size);
+    cudaMemcpy(d_A, h_A, size, cudaMemcpyHostToDevice);
+    cudaMemcpy(d_B, h_B, size, cudaMemcpyHostToDevice);
 
     int threadsPerBlock = 256;
     int blocksPerGrid =(numElements + threadsPerBlock - 1) / threadsPerBlock;
