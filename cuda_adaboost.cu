@@ -153,7 +153,7 @@ int main(){
     float *d_sum;
     *sum_test = 0.0;
     cudaMalloc((void **)&d_B, sizeof(float));
-    cudaMemcpy(sum_test,d_sum,sizeof(float),cudaMemcpyHostToDevice);
+    cudaMemcpy(d_sum,sum_test,sizeof(float),cudaMemcpyHostToDevice);
 
     vectorAdd<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_sum, numElements);
     printf("Sum_test is %f\n", *sum_test);
