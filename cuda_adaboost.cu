@@ -23,7 +23,7 @@ vectorAdd(const float *A, const float *B, float *C, int numElements)
     if (i < numElements)
     {
         (*C) += A[i] + B[i];
-        printf("C is now %f\n", *C);
+        //printf("C is now %f\n", *C);
     }
 }
 
