@@ -152,7 +152,7 @@ int main(){
     float *sum_test = (float*)malloc(sizeof(float));
     float *d_sum;
     *sum_test = 0.0;
-    cudaMalloc((void **)&d_B, sizeof(float));
+    cudaMalloc((void **)&d_sum, sizeof(float));
     cudaMemcpy(d_sum,sum_test,sizeof(float),cudaMemcpyHostToDevice);
 
     vectorAdd<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_sum, numElements);
