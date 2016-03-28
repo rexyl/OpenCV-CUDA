@@ -152,11 +152,13 @@ int main(){
     printf("CUDA kernel launch with %d blocks of %d threads\n", blocksPerGrid, threadsPerBlock);
     float *sum_test = (float*)malloc(size);
     float *d_sum;
-    *sum_test = 0.0;
+    //*sum_test = 0.0;
     cudaMalloc((void **)&d_sum, size);
     cudaMemcpy(d_sum,sum_test,size,cudaMemcpyHostToDevice);
 
     vectorAdd<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_sum, numElements);
+    printf("Copy output data from the CUDA device to the host memory\n");
+    cudaMemcpy(sum_test, d_C, size, cudaMemcpyDeviceToHost);
     for (int i = 0; i < nums; ++i)
     {
         printf("Sum_test is %f\n", sum_test[i]);    
