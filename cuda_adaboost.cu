@@ -10,6 +10,7 @@
 float **usps;
 float *w;
 float *d_w;
+float *d_sum_w;
 int *y;
 int *d_y;
 float *d_vec, *d_err1, *d_err2;
@@ -71,7 +72,7 @@ vectorAdd_train(const float *vec, const float *w, const int *y,
 void cuda_train(struct pars* pars_p){
     size_t size = nums * sizeof(float);
     cuda_checker(cudaMemcpy(d_w, w, size, cudaMemcpyHostToDevice));
-    float err1,err2;
+    float err1,err2,sum_w;
     int cur_j = 0,cur_theta = 0,cur_m = 0;
     float cur_min = 100000.0;
     for (int j = 0;j<cols;j++){
@@ -87,10 +88,10 @@ void cuda_train(struct pars* pars_p){
             int threadsPerBlock = 256;
             int blocksPerGrid =(nums + threadsPerBlock - 1) / threadsPerBlock;
             vectorAdd_train<<<blocksPerGrid, threadsPerBlock>>>(d_vec, d_w, d_y,
-                d_err1, d_err2, numElements,boundary);
+                d_err1, d_err2, nums,boundary);
             cuda_checker(cudaMemcpy(&err1, d_err1, sizeof(float), cudaMemcpyDeviceToHost));
             cuda_checker(cudaMemcpy(&err2, d_err2, sizeof(float), cudaMemcpyDeviceToHost));
-
+            cuda_checker(cudaMemcpy(&sum_w, d_sum_w, sizeof(float), cudaMemcpyDeviceToHost));
             if(err1<err2){
                 err = err1/sum_w;
                 m = 1;
@@ -240,6 +241,7 @@ int main(){
         exit(EXIT_FAILURE);
     }
     cuda_checker(cudaMalloc((void **)&d_w, size));
+    cuda_checker(cudaMalloc((void **)&d_sum_w, sizeof(float)));
     cuda_checker(cudaMalloc((void **)&d_err1, sizeof(float)));
     cuda_checker(cudaMalloc((void **)&d_err2, sizeof(float)));
     cuda_checker(cudaMalloc((void **)&d_vec, size));
