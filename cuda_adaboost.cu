@@ -150,7 +150,7 @@ int main(){
     float *h_B = usps[1];
 
     // Allocate the host output vector C
-    float *h_C = (float *)malloc(size);
+    float *h_C = (float *)malloc(sizeof(float));
 
     // Verify that allocations succeeded
     if (h_A == NULL || h_B == NULL || h_C == NULL)
@@ -188,7 +188,7 @@ int main(){
 
     // Allocate the device output vector C
     float *d_C = NULL;
-    err = cudaMalloc((void **)&d_C, size);
+    err = cudaMalloc((void **)&d_C, sizeof(float));
 
     if (err != cudaSuccess)
     {
@@ -231,7 +231,7 @@ int main(){
     // Copy the device result vector in device memory to the host result vector
     // in host memory.
     printf("Copy output data from the CUDA device to the host memory\n");
-    err = cudaMemcpy(h_C, d_C, size, cudaMemcpyDeviceToHost);
+    err = cudaMemcpy(h_C, d_C, sizeof(float), cudaMemcpyDeviceToHost);
 
     if (err != cudaSuccess){
         fprintf(stderr, "Failed to copy vector C from device to host (error code %s)!\n", cudaGetErrorString(err));
