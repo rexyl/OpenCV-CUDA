@@ -154,15 +154,12 @@ int main(){
     float *d_sum;
     sum_test[0] = 0.0;
     cudaMalloc((void **)&d_sum, size);
-    cudaMemcpy(d_sum,sum_test,size,cudaMemcpyHostToDevice);
+    cudaMemcpy(sum_test,d_sum,size,cudaMemcpyHostToDevice);
 
     vectorAdd<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_sum, numElements);
     printf("Copy output data from the CUDA device to the host memory\n");
     cudaMemcpy(sum_test, d_sum, size, cudaMemcpyDeviceToHost);
-    for (int i = 0; i < nums; ++i)
-    {
-        printf("Sum_test is %f\n", sum_test[0]);    
-    }
+    printf("Sum_test is %f\n", sum_test[0]);
     
     cudaFree(d_A);
     cudaFree(d_B);
