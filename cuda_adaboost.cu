@@ -4,7 +4,7 @@
 #include <time.h>
 #include <math.h>
 #include <cuda_runtime.h>
-int nums = 200,cols = 256;
+int nums = 100,cols = 256;
 float **usps;
 float *w;
 int *y;
@@ -150,12 +150,16 @@ int main(){
     printf("[Vector addition of %d elements]\n", numElements);
 
     // Allocate the host input vector A
-    //float *h_A = (float *)malloc(size);
-    float *h_A = usps[0];
+    float *h_A = (float *)malloc(size);
+    
 
     // Allocate the host input vector B
-    //float *h_B = (float *)malloc(size);
-    float *h_B = usps[1];
+    float *h_B = (float *)malloc(size);
+    for (int i = 0; i < nums; ++i)
+    {
+        h_A[i] = i*1.0;
+        h_B[i] = i*1.0;
+    }
 
     // Allocate the host output vector C
     float *h_C = (float *)malloc(sizeof(float));
@@ -286,29 +290,29 @@ int main(){
     /*****************************/
 
 
-    clock_t begin, end;
-    double time_spent;
-    begin = clock();
-    struct pars* ap;
-    float *alpha = (float *)malloc(sizeof(float)*5);;
-    int *c_hat;
-    ap = AdaBoost(5,alpha);
-    c_hat = agg_class(alpha,ap,5);
-    end = clock();
-    time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-    for (int i = 0; i < 5; ++i)
-    {
-        printf("%d,%f,%d,%f\n",ap[i].return_j,ap[i].theta,ap[i].return_m,alpha[i]);    
-    }
-    printf("time is %f\n",time_spent);
-    for(int j=0;j<cols;j++){
-        free(usps[j]);
-    }
-    free(usps);
-    free(w);
-    free(y);
-    free(alpha);
-    free(ap);
-    free(c_hat);
+    // clock_t begin, end;
+    // double time_spent;
+    // begin = clock();
+    // struct pars* ap;
+    // float *alpha = (float *)malloc(sizeof(float)*5);;
+    // int *c_hat;
+    // ap = AdaBoost(5,alpha);
+    // c_hat = agg_class(alpha,ap,5);
+    // end = clock();
+    // time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+    // for (int i = 0; i < 5; ++i)
+    // {
+    //     printf("%d,%f,%d,%f\n",ap[i].return_j,ap[i].theta,ap[i].return_m,alpha[i]);    
+    // }
+    // printf("time is %f\n",time_spent);
+    // for(int j=0;j<cols;j++){
+    //     free(usps[j]);
+    // }
+    // free(usps);
+    // free(w);
+    // free(y);
+    // free(alpha);
+    // free(ap);
+    // free(c_hat);
     return 0;
 }
