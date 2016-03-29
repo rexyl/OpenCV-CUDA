@@ -161,7 +161,7 @@ int main(){
     cudaMemcpy(sum_test, d_sum, size, cudaMemcpyDeviceToHost);
     for (int i = 0; i < nums; ++i)
     {
-        printf("Sum_test is %f\n", sum_test[i]);    
+        printf("Sum_test is %f\n", sum_test[0]);    
     }
     
     cudaFree(d_A);
