@@ -7,7 +7,10 @@
 int nums = 200,cols = 256;
 float **usps;
 float *w;
+float *d_w;
 int *y;
+int *d_y;
+float *d_vec, *d_err_diff;
 
 struct pars{
     int return_j;
@@ -26,13 +29,80 @@ __global__ void
 vectorAdd(const float *A, const float *B, float *C, int numElements)
 {
     int i = blockDim.x * blockIdx.x + threadIdx.x;
-    //printf("blockDim.x is %d,blockIdx.x is %d, threadIdx.x %d \n", blockDim.x , blockIdx.x , threadIdx.x);
+    float sum = 0.0;
     if (i < numElements)
     {
-        C[i] = A[i] + B[i];
+        sum += A[i] + B[i];
+    }
+    *C = sum;
+}
+/*
+__global__ void
+vectorAdd_train(const float *vec, const float *w, const int *y,
+    float *err_diff, int numElements, float boundary){
+
+    int z = blockDim.x * blockIdx.x + threadIdx.x;
+    if (z < numElements)
+    {
+        err_diff[z] = w[z] * ( ((vec[z]<=boundary) ^ (y[z]==-1)) -  ((vec[z]<=boundary) ^ (y[z]==1)));
     }
 }
 
+void cuda_train(struct pars* pars_p){
+    size_t size = nums * sizeof(float);
+    cuda_checker(cudaMemcpy(d_w, w, size, cudaMemcpyHostToDevice));
+    float *err_diff = (float*)malloc(size);
+    int cur_j = 0,cur_theta = 0,cur_m = 0;
+    float cur_min = 100000.0;
+    for (int j = 0;j<cols;j++){
+        float *vec = usps[j];
+        cuda_checker(cudaMemcpy(d_vec, vec, size, cudaMemcpyHostToDevice));
+        float minimal = 100000.0;
+        int cur_i = 0,sel_m= 0;
+        for(int i=0;i<nums;i++){
+            float boundary = vec[i];
+            int m = 0;
+            //float err = 0.0,err1 = 0.0,err2 = 0.0,sum_w = 0;
+
+            int threadsPerBlock = 256;
+            int blocksPerGrid =(nums + threadsPerBlock - 1) / threadsPerBlock;
+            vectorAdd_train<<<blocksPerGrid, threadsPerBlock>>>(d_vec, d_w, d_y,
+                d_err_diff, numElements,boundary);
+            cuda_checker(cudaMemcpy(err_diff, d_err_diff, size, cudaMemcpyDeviceToHost));
+            float err_sum = 0.0,w_sum = 0.0;
+            for (int i = 0; i < nums; ++i)
+            {
+                err_sum += err_diff;
+                w_sum += w[i];
+            }
+            err = err_sum>0?
+            if(err1<err2){
+                err = err1/sum_w;
+                m = 1;
+            }else{
+                err = err2/sum_w;
+                m = -1;
+            }
+            if(err<minimal){
+                minimal = err;
+                cur_i = i;
+                sel_m = m;
+            }
+        }
+    if(minimal<cur_min){
+        cur_min = minimal;
+        cur_j = j;
+        cur_theta = cur_i;
+        cur_m = sel_m;
+    }
+  }
+  pars_p->return_j = cur_j;
+  pars_p->theta = usps[cur_j][cur_theta];
+  pars_p->return_m = cur_m;
+  free(err_diff);
+  return;
+}
+*/
 void train(struct pars* pars_p){
   int cur_j = 0,cur_theta = 0,cur_m = 0;
   float cur_min = 100000.0;
@@ -153,6 +223,11 @@ int main(){
         fprintf(stderr, "Failed to allocate host vectors!\n");
         exit(EXIT_FAILURE);
     }
+    cuda_checker(cudaMalloc((void **)&d_w, size));
+    cuda_checker(cudaMalloc((void **)&d_err_diff, size));
+    cuda_checker(cudaMalloc((void **)&d_vec, size));
+    cuda_checker(cudaMalloc((void **)&d_y, nums*sizeof(int)));
+
     float *d_A = NULL;
     err = cudaMalloc((void **)&d_A, size);
     cuda_checker(err);
@@ -166,6 +241,8 @@ int main(){
     cuda_checker(err);
 
     printf("Copy input data from the host memory to the CUDA device\n");
+    err = cudaMemcpy(d_y, y, sizeof(int)*nums, cudaMemcpyHostToDevice);
+    cuda_checker(err);
     err = cudaMemcpy(d_A, h_A, size, cudaMemcpyHostToDevice);
     cuda_checker(err);
 
@@ -193,6 +270,7 @@ int main(){
     cuda_checker( cudaFree(d_A));
     cuda_checker( cudaFree(d_B));
     cuda_checker( cudaFree(d_C));
+    cuda_checker( cudaFree(d_w));
 
     if (err != cudaSuccess)
     {
