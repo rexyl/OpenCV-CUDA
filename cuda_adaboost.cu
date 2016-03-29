@@ -72,7 +72,7 @@ vectorAdd_train(const float *vec, const float *w, const int *y,
 void cuda_train(struct pars* pars_p){
     size_t size = nums * sizeof(float);
     cuda_checker(cudaMemcpy(d_w, w, size, cudaMemcpyHostToDevice));
-    float err1,err2,sum_w;
+    float err1,err2,sum_w,err;
     int cur_j = 0,cur_theta = 0,cur_m = 0;
     float cur_min = 100000.0;
     for (int j = 0;j<cols;j++){
@@ -88,7 +88,7 @@ void cuda_train(struct pars* pars_p){
             int threadsPerBlock = 256;
             int blocksPerGrid =(nums + threadsPerBlock - 1) / threadsPerBlock;
             vectorAdd_train<<<blocksPerGrid, threadsPerBlock>>>(d_vec, d_w, d_y,
-                d_err1, d_err2, nums,boundary);
+                d_err1, d_err2, d_sum_w,nums,boundary);
             cuda_checker(cudaMemcpy(&err1, d_err1, sizeof(float), cudaMemcpyDeviceToHost));
             cuda_checker(cudaMemcpy(&err2, d_err2, sizeof(float), cudaMemcpyDeviceToHost));
             cuda_checker(cudaMemcpy(&sum_w, d_sum_w, sizeof(float), cudaMemcpyDeviceToHost));
@@ -115,7 +115,7 @@ void cuda_train(struct pars* pars_p){
   pars_p->return_j = cur_j;
   pars_p->theta = usps[cur_j][cur_theta];
   pars_p->return_m = cur_m;
-  free(err_diff);
+  
   return;
 }
 
