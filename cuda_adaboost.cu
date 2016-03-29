@@ -140,7 +140,7 @@ int main(){
     printf("[Vector addition of %d elements]\n", numElements);
     float *h_A = usps[0];
     float *h_B = usps[1];
-    float *sum_test = (float*)malloc(size);
+    float *h_C = (float*)malloc(size);
 
     float *d_A = NULL;
     cudaMalloc((void **)&d_A, size);
@@ -149,10 +149,10 @@ int main(){
     cudaMemcpy(d_A, h_A, size, cudaMemcpyHostToDevice);
     cudaMemcpy(d_B, h_B, size, cudaMemcpyHostToDevice);
 
-    float *d_sum;
-    sum_test[0] = 0.0;
-    cudaMalloc((void **)&d_sum, size);
-    cudaMemcpy(d_sum,sum_test,size,cudaMemcpyHostToDevice);
+    float *d_C;
+    h_C[0] = 0.0;
+    cudaMalloc((void **)&d_C, size);
+    cudaMemcpy(d_C,h_C,size,cudaMemcpyHostToDevice);
 
     int threadsPerBlock = 256;
     int blocksPerGrid =(numElements + threadsPerBlock - 1) / threadsPerBlock;
@@ -161,7 +161,7 @@ int main(){
     vectorAdd<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_sum, numElements);
     printf("Copy output data from the CUDA device to the host memory\n");
     cudaMemcpy(sum_test, d_sum, size, cudaMemcpyDeviceToHost);
-    printf("Sum_test is %f\n", sum_test[0]);
+    printf("Sum_test is %f\n", h_C[0]);
     
     cudaFree(d_A);
     cudaFree(d_B);
