@@ -281,10 +281,10 @@ int main(){
     err = cudaMemcpy(h_C, d_C, size, cudaMemcpyDeviceToHost);
     cuda_checker(err);
 
-    for (int i = 0; i < nums; ++i)
-    {
-        printf("float is %f\n", h_C[i]);
-    }
+    // for (int i = 0; i < nums; ++i)
+    // {
+    //     printf("float is %f\n", h_C[i]);
+    // }
     
     cuda_checker( cudaFree(d_A));
     cuda_checker( cudaFree(d_B));
@@ -301,29 +301,29 @@ int main(){
     /*****************************/
 
 
-    // clock_t begin, end;
-    // double time_spent;
-    // begin = clock();
-    // struct pars* ap;
-    // float *alpha = (float *)malloc(sizeof(float)*5);;
-    // int *c_hat;
-    // ap = AdaBoost(5,alpha);
-    // c_hat = agg_class(alpha,ap,5);
-    // end = clock();
-    // time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-    // for (int i = 0; i < 5; ++i)
-    // {
-    //     printf("%d,%f,%d,%f\n",ap[i].return_j,ap[i].theta,ap[i].return_m,alpha[i]);    
-    // }
-    // printf("time is %f\n",time_spent);
-    // for(int j=0;j<cols;j++){
-    //     free(usps[j]);
-    // }
-    // free(usps);
-    // free(w);
-    // free(y);
-    // free(alpha);
-    // free(ap);
-    // free(c_hat);
+    clock_t begin, end;
+    double time_spent;
+    begin = clock();
+    struct pars* ap;
+    float *alpha = (float *)malloc(sizeof(float)*5);;
+    int *c_hat;
+    ap = AdaBoost(5,alpha);
+    c_hat = agg_class(alpha,ap,5);
+    end = clock();
+    time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+    for (int i = 0; i < 5; ++i)
+    {
+        printf("%d,%f,%d,%f\n",ap[i].return_j,ap[i].theta,ap[i].return_m,alpha[i]);    
+    }
+    printf("time is %f\n",time_spent);
+    for(int j=0;j<cols;j++){
+        free(usps[j]);
+    }
+    free(usps);
+    free(w);
+    free(y);
+    free(alpha);
+    free(ap);
+    free(c_hat);
     return 0;
 }
