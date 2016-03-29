@@ -188,6 +188,7 @@ int main(){
 
     // Allocate the device output vector C
     float *d_C = NULL;
+    *d_C = 0.0;
     err = cudaMalloc((void **)&d_C, sizeof(float));
 
     if (err != cudaSuccess)
