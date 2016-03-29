@@ -12,7 +12,7 @@ float *w;
 float *d_w;
 int *y;
 int *d_y;
-float *d_vec, *d_err_diff;
+float *d_vec, *d_err1, *d_err2;
 
 struct pars{
     int return_j;
@@ -43,22 +43,35 @@ vectorAdd(const float *A, const float *B, float *C, int numElements)
     }
     *C = tmp;
 }
-/*
+
 __global__ void
 vectorAdd_train(const float *vec, const float *w, const int *y,
-    float *err_diff, int numElements, float boundary){
+    float *err1, float *err2, float *sum_w,int numElements, float boundary){
+    __shared__ float sum1[nums];
+    __shared__ float sum2[nums];
 
     int z = blockDim.x * blockIdx.x + threadIdx.x;
     if (z < numElements)
     {
-        err_diff[z] = w[z] * ( ((vec[z]<=boundary) ^ (y[z]==-1)) -  ((vec[z]<=boundary) ^ (y[z]==1)));
+        sum1[z] = w[z] * ((vec[z]<=boundary) ^ (y[z]==-1));
+        sum2[z] = w[z] * ((vec[z]<=boundary) ^ (y[z]==1));
     }
+    __syncthreads();
+    float tmp1 = 0.0 , tmp2 = 0.0 , tmp3 = 0.0;
+    for (int i = 0; i < nums; ++i){
+        tmp1+=sum1[i];
+        tmp2+=sum2[i];
+        tmp3+=w[i];
+    }
+    *err1 = tmp1;
+    *err2 = tmp2;
+    *sum_w = tmp3;
 }
 
 void cuda_train(struct pars* pars_p){
     size_t size = nums * sizeof(float);
     cuda_checker(cudaMemcpy(d_w, w, size, cudaMemcpyHostToDevice));
-    float *err_diff = (float*)malloc(size);
+    float err1,err2;
     int cur_j = 0,cur_theta = 0,cur_m = 0;
     float cur_min = 100000.0;
     for (int j = 0;j<cols;j++){
@@ -74,15 +87,10 @@ void cuda_train(struct pars* pars_p){
             int threadsPerBlock = 256;
             int blocksPerGrid =(nums + threadsPerBlock - 1) / threadsPerBlock;
             vectorAdd_train<<<blocksPerGrid, threadsPerBlock>>>(d_vec, d_w, d_y,
-                d_err_diff, numElements,boundary);
-            cuda_checker(cudaMemcpy(err_diff, d_err_diff, size, cudaMemcpyDeviceToHost));
-            float err_sum = 0.0,w_sum = 0.0;
-            for (int i = 0; i < nums; ++i)
-            {
-                err_sum += err_diff;
-                w_sum += w[i];
-            }
-            err = err_sum>0?
+                d_err1, d_err2, numElements,boundary);
+            cuda_checker(cudaMemcpy(&err1, d_err1, sizeof(float), cudaMemcpyDeviceToHost));
+            cuda_checker(cudaMemcpy(&err2, d_err2, sizeof(float), cudaMemcpyDeviceToHost));
+
             if(err1<err2){
                 err = err1/sum_w;
                 m = 1;
@@ -109,7 +117,7 @@ void cuda_train(struct pars* pars_p){
   free(err_diff);
   return;
 }
-*/
+
 void train(struct pars* pars_p){
   int cur_j = 0,cur_theta = 0,cur_m = 0;
   float cur_min = 100000.0;
@@ -157,7 +165,8 @@ struct pars* AdaBoost(int B,float *alpha){
     struct pars* allPars = (struct pars*)malloc(sizeof(struct pars)*B);
     for (int b=0;b<B;b++){
         struct pars pars;
-        train(&pars);
+        //train(&pars);
+        cuda_train(&pars);
         // label = classify(X,pars)
         float *vec = usps[pars.return_j];
         float err = 0.0,w_sum = 0.0;
@@ -231,7 +240,8 @@ int main(){
         exit(EXIT_FAILURE);
     }
     cuda_checker(cudaMalloc((void **)&d_w, size));
-    cuda_checker(cudaMalloc((void **)&d_err_diff, size));
+    cuda_checker(cudaMalloc((void **)&d_err1, sizeof(float)));
+    cuda_checker(cudaMalloc((void **)&d_err2, sizeof(float)));
     cuda_checker(cudaMalloc((void **)&d_vec, size));
     cuda_checker(cudaMalloc((void **)&d_y, nums*sizeof(int)));
 
