@@ -151,11 +151,11 @@ int main(){
 
     // Allocate the host input vector A
     //float *h_A = (float *)malloc(size);
-    float *h_A = usps[0];
+    float *h_A = usps+0;
 
     // Allocate the host input vector B
     //float *h_B = (float *)malloc(size);
-    float *h_B = usps[1];
+    float *h_B = usps+1;
     // for (int i = 0; i < nums; ++i)
     // {
     //     h_A[i] = i*1.0;
