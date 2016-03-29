@@ -16,6 +16,13 @@ struct pars{
 };
 
 __global__ void
+initialize(float *C, float number)
+{
+    int i = blockDim.x * blockIdx.x + threadIdx.x;
+    C[0] = number;
+}
+
+__global__ void
 vectorAdd(const float *A, const float *B, float *C, int numElements)
 {
     int i = blockDim.x * blockIdx.x + threadIdx.x;
@@ -189,9 +196,10 @@ int main(){
 
     // Allocate the device output vector C
     float *d_C = NULL;
-    float dummy = 0.0;
+    //float dummy = 0.0;
     err = cudaMalloc((void **)&d_C, sizeof(float));
-    cudaMemcpy(d_C, &dummy, sizeof(float), cudaMemcpyHostToDevice);
+    //cudaMemcpy(d_C, &dummy, sizeof(float), cudaMemcpyHostToDevice);
+
 
     if (err != cudaSuccess)
     {
@@ -222,6 +230,7 @@ int main(){
     int threadsPerBlock = 256;
     int blocksPerGrid =(numElements + threadsPerBlock - 1) / threadsPerBlock;
     printf("CUDA kernel launch with %d blocks of %d threads\n", blocksPerGrid, threadsPerBlock);
+    initialize<<<1,1>>>(d_C,0.0);
     vectorAdd<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, numElements);
     err = cudaGetLastError();
 
