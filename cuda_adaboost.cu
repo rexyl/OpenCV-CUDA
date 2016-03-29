@@ -29,11 +29,12 @@ __global__ void
 vectorAdd(const float *A, const float *B, float *C, int numElements)
 {
     int i = blockDim.x * blockIdx.x + threadIdx.x;
-    float sum = 0.0;
+    __shared__ float sum = 0.0;
     if (i < numElements)
     {
         sum += A[i] + B[i];
     }
+    __syncthreads();
     *C = sum;
 }
 /*
