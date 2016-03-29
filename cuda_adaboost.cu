@@ -142,10 +142,12 @@ int main(){
     printf("[Vector addition of %d elements]\n", numElements);
 
     // Allocate the host input vector A
-    float *h_A = (float *)malloc(size);
+    //float *h_A = (float *)malloc(size);
+    float *h_A = usps[0];
 
     // Allocate the host input vector B
-    float *h_B = (float *)malloc(size);
+    //float *h_B = (float *)malloc(size);
+    float *h_B = usps[1];
 
     // Allocate the host output vector C
     float *h_C = (float *)malloc(size);
