@@ -15,12 +15,12 @@ struct pars{
     int return_m;
 };
 
-__global__ void
-initialize(float *C, float number)
-{
-    int i = blockDim.x * blockIdx.x + threadIdx.x;
-    C[0] = number;
-}
+// __global__ void
+// initialize(float *C, float number)
+// {
+//     int i = blockDim.x * blockIdx.x + threadIdx.x;
+//     C[0] = number;
+// }
 
 __global__ void
 vectorAdd(const float *A, const float *B, float *C, int numElements)
@@ -158,8 +158,8 @@ int main(){
     //float *h_B = usps+1;
     for (int i = 0; i < nums; ++i)
     {
-        h_A[i] = usps[0][i];
-        h_B[i] = usps[1][i];
+        h_A[i] = i*1.0;//usps[0][i];
+        h_B[i] = i*1.0;//usps[1][i];
     }
 
     // Allocate the host output vector C
