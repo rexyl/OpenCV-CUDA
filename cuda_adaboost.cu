@@ -4,7 +4,9 @@
 #include <time.h>
 #include <math.h>
 #include <cuda_runtime.h>
-int nums = 200,cols = 256;
+#define nums 200
+#define cols 256
+//int nums = 200,cols = 256;
 float **usps;
 float *w;
 float *d_w;
@@ -28,14 +30,18 @@ void cuda_checker(cudaError_t err){
 __global__ void
 vectorAdd(const float *A, const float *B, float *C, int numElements)
 {
+    __shared__ float sum[nums];
     int i = blockDim.x * blockIdx.x + threadIdx.x;
-    __shared__ float sum = 0.0;
     if (i < numElements)
     {
-        sum += A[i] + B[i];
+        sum[i] += A[i] + B[i];
     }
     __syncthreads();
-    *C = sum;
+    float tmp = 0.0;
+    for (int i = 0; i < nums; ++i){
+        tmp+=sum[i];
+    }
+    *C = tmp;
 }
 /*
 __global__ void
