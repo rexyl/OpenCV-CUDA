@@ -150,9 +150,9 @@ int main(){
     cudaMemcpy(d_B, h_B, size, cudaMemcpyHostToDevice);
 
     float *d_C;
-    h_C[0] = 0.0;
+    //h_C[0] = 0.0;
     cudaMalloc((void **)&d_C, size);
-    cudaMemcpy(d_C,h_C,size,cudaMemcpyHostToDevice);
+    //cudaMemcpy(d_C,h_C,size,cudaMemcpyHostToDevice);
 
     int threadsPerBlock = 256;
     int blocksPerGrid =(numElements + threadsPerBlock - 1) / threadsPerBlock;
