@@ -162,7 +162,7 @@ int main(){
     cuda_checker(err);
 
     float *d_C = NULL;
-    err = cudaMalloc((void **)&d_C, sizeof(float));
+    err = cudaMalloc((void **)&d_C, size);
     cuda_checker(err);
 
     printf("Copy input data from the host memory to the CUDA device\n");
