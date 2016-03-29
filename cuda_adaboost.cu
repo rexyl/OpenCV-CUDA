@@ -158,9 +158,9 @@ int main(){
     int blocksPerGrid =(numElements + threadsPerBlock - 1) / threadsPerBlock;
     printf("CUDA kernel launch with %d blocks of %d threads\n", blocksPerGrid, threadsPerBlock);
     
-    vectorAdd<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_sum, numElements);
+    vectorAdd<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, numElements);
     printf("Copy output data from the CUDA device to the host memory\n");
-    cudaMemcpy(sum_test, d_sum, size, cudaMemcpyDeviceToHost);
+    cudaMemcpy(h_C, d_C, size, cudaMemcpyDeviceToHost);
     printf("Sum_test is %f\n", h_C[0]);
     
     cudaFree(d_A);
