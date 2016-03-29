@@ -34,7 +34,7 @@ vectorAdd(const float *A, const float *B, float *C, int numElements)
     int i = blockDim.x * blockIdx.x + threadIdx.x;
     if (i < numElements)
     {
-        sum[i] += A[i] + B[i];
+        sum[i] = A[i] + B[i];
     }
     __syncthreads();
     float tmp = 0.0;
