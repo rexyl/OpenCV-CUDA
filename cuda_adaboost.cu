@@ -104,23 +104,22 @@ vectorAdd_train2d(const float *vec, const float *w, const int *y,
     __syncthreads();
     if (z == 0 && i == 0)
     {
-        printf("1\n");
-        // for (int t = 0; t < nums; ++t)
-        // {
-        //     printf("mini:%f\n",minimal[t]);
-        // }
-        // float min_tmp = 100000.0;
-        // int cur_i = -1, sel_m = 0;
-        // for (int t = 0; t < nums; ++t)
-        // {
-        //     //printf("min_tmp:%f,minimal[t]:%f\n",min_tmp,minimal[t] );
-        //     cur_i = min_tmp<minimal[t]?cur_i:t;
-        //     sel_m = min_tmp<minimal[t]?sel_m:m[t];
-        //     min_tmp = min_tmp<minimal[t]?min_tmp:minimal[t];
-        // }
-        // *min_out = min_tmp;
-        // *sel_m_out = sel_m;
-        // *cur_i_out = cur_i;
+        for (int t = 0; t < nums; ++t)
+        {
+            printf("mini:%f\n",minimal[t]);
+        }
+        float min_tmp = 100000.0;
+        int cur_i = -1, sel_m = 0;
+        for (int t = 0; t < nums; ++t)
+        {
+            //printf("min_tmp:%f,minimal[t]:%f\n",min_tmp,minimal[t] );
+            cur_i = min_tmp<minimal[t]?cur_i:t;
+            sel_m = min_tmp<minimal[t]?sel_m:m[t];
+            min_tmp = min_tmp<minimal[t]?min_tmp:minimal[t];
+        }
+        *min_out = min_tmp;
+        *sel_m_out = sel_m;
+        *cur_i_out = cur_i;
     }
     
     //printf("min_out is %f,sel_m_out %d,cur_i_out %d\n",min_tmp,sel_m,cur_i);
@@ -136,8 +135,8 @@ void cuda_train1(struct pars* pars_p){
         cuda_checker(cudaMemcpy(d_vec, vec, size, cudaMemcpyHostToDevice));
         float minimal = 100000.0;
         int cur_i = 0,sel_m= 0;
-        dim3 block(16,16);
-        dim3 grid ((nums+15)/16,(nums+15)/16);
+        dim3 block(nums,nums);
+        dim3 grid (1,1);
 
         float *min_out;
         cuda_checker(cudaMalloc((void **)&min_out,sizeof(float)));
@@ -353,7 +352,7 @@ int main(){
     //c_hat = agg_class(alpha,ap,5);
     struct pars pars;
     cuda_train1(&pars);
-
+    printf("%f",pars.theta);
     end = clock();
     time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
     // for (int i = 0; i < 5; ++i)
