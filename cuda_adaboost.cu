@@ -23,7 +23,7 @@ struct pars{
 
 void cuda_checker(cudaError_t err){
     if (err != cudaSuccess){
-        fprintf(stderr, "Failed to allocate device vector A (error code %s)!\n", cudaGetErrorString(err));
+        fprintf(stderr, "Failed to allocate device(error code %s)!\n", cudaGetErrorString(err));
         exit(EXIT_FAILURE);
     }
 }
@@ -115,7 +115,7 @@ void cuda_train(struct pars* pars_p){
   pars_p->return_j = cur_j;
   pars_p->theta = usps[cur_j][cur_theta];
   pars_p->return_m = cur_m;
-  
+
   return;
 }
 
@@ -230,16 +230,6 @@ int main(){
     cudaError_t err = cudaSuccess;
     int numElements = nums;
     size_t size = numElements * sizeof(float);
-
-    float *h_A = usps[0];
-    float *h_B = usps[1];
-    float *h_C = (float *)malloc(size);
-    // Verify that allocations succeeded
-    if (h_A == NULL || h_B == NULL || h_C == NULL)
-    {
-        fprintf(stderr, "Failed to allocate host vectors!\n");
-        exit(EXIT_FAILURE);
-    }
     cuda_checker(cudaMalloc((void **)&d_w, size));
     cuda_checker(cudaMalloc((void **)&d_sum_w, sizeof(float)));
     cuda_checker(cudaMalloc((void **)&d_err1, sizeof(float)));
@@ -247,60 +237,23 @@ int main(){
     cuda_checker(cudaMalloc((void **)&d_vec, size));
     cuda_checker(cudaMalloc((void **)&d_y, nums*sizeof(int)));
 
-    float *d_A = NULL;
-    err = cudaMalloc((void **)&d_A, size);
-    cuda_checker(err);
-
-    float *d_B = NULL;
-    err = cudaMalloc((void **)&d_B, size);
-    cuda_checker(err);
-
-    float *d_C = NULL;
-    err = cudaMalloc((void **)&d_C, size);
-    cuda_checker(err);
-
     printf("Copy input data from the host memory to the CUDA device\n");
-    err = cudaMemcpy(d_y, y, sizeof(int)*nums, cudaMemcpyHostToDevice);
-    cuda_checker(err);
-    err = cudaMemcpy(d_A, h_A, size, cudaMemcpyHostToDevice);
-    cuda_checker(err);
-
-    err = cudaMemcpy(d_B, h_B, size, cudaMemcpyHostToDevice);
-    cuda_checker(err);
+    cuda_checker(cudaMemcpy(d_y, y, sizeof(int)*nums, cudaMemcpyHostToDevice));
 
     // Launch the Vector Add CUDA Kernel
-    int threadsPerBlock = 256;
-    int blocksPerGrid =(numElements + threadsPerBlock - 1) / threadsPerBlock;
-    printf("CUDA kernel launch with %d blocks of %d threads\n", blocksPerGrid, threadsPerBlock);
-    vectorAdd<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, numElements);
+    // int threadsPerBlock = 256;
+    // int blocksPerGrid =(numElements + threadsPerBlock - 1) / threadsPerBlock;
+    // printf("CUDA kernel launch with %d blocks of %d threads\n", blocksPerGrid, threadsPerBlock);
+    // vectorAdd<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, numElements);
 
-    err = cudaGetLastError();
-    cuda_checker(err);
-
-    printf("Copy output data from the CUDA device to the host memory\n");
-    err = cudaMemcpy(h_C, d_C, size, cudaMemcpyDeviceToHost);
-    cuda_checker(err);
+    // err = cudaGetLastError();
+    // cuda_checker(err);
 
     // for (int i = 0; i < nums; ++i)
     // {
     //     printf("float is %f\n", h_C[i]);
     // }
-    
-    cuda_checker( cudaFree(d_A));
-    cuda_checker( cudaFree(d_B));
-    cuda_checker( cudaFree(d_C));
-    cuda_checker( cudaFree(d_w));
-
-    if (err != cudaSuccess)
-    {
-        fprintf(stderr, "Failed to free device vector C (error code %s)!\n", cudaGetErrorString(err));
-        exit(EXIT_FAILURE);
-    }
-    free(h_C);
-    cuda_checker(cudaDeviceReset());
     /*****************************/
-
-
     clock_t begin, end;
     double time_spent;
     begin = clock();
@@ -325,5 +278,13 @@ int main(){
     free(alpha);
     free(ap);
     free(c_hat);
+
+    cuda_checker(cudaFree(d_w));
+    cuda_checker(cudaFree(d_sum_w));
+    cuda_checker(cudaFree(d_err1));
+    cuda_checker(cudaFree(d_err2));
+    cuda_checker(cudaFree(d_vec));
+    cuda_checker(cudaFree(d_y));
+    cuda_checker(cudaDeviceReset());
     return 0;
 }
