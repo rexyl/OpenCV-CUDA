@@ -4,7 +4,7 @@
 #include <time.h>
 #include <math.h>
 #include <cuda_runtime.h>
-#define nums 2000
+#define nums 10000
 #define cols 256
 //int nums = 200,cols = 256;
 float **usps;
@@ -238,9 +238,9 @@ struct pars* AdaBoost(int B,float *alpha){
     struct pars* allPars = (struct pars*)malloc(sizeof(struct pars)*B);
     for (int b=0;b<B;b++){
         struct pars pars;
+        cuda_train1(&pars);
         //train(&pars);
         //cuda_train(&pars);
-        cuda_train1(&pars);
         // label = classify(X,pars)
         float *vec = usps[pars.return_j];
         float err = 0.0,w_sum = 0.0;
@@ -333,7 +333,7 @@ int main(){
     float *alpha = (float *)malloc(sizeof(float)*5);;
     int *c_hat;
     ap = AdaBoost(5,alpha);
-    c_hat = agg_class(alpha,ap,5);
+    //c_hat = agg_class(alpha,ap,5);
     end = clock();
     time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
     for (int i = 0; i < 5; ++i)
