@@ -101,7 +101,7 @@ vectorAdd_train2d(const float *vec, const float *w, const int *y,
     for (int t = 0; t < nums; ++t)
     {
         cur_i = min_tmp<minimal[t]?cur_i:t;
-        sel_m = min_tmp<minimal[t]?m:m[t];
+        sel_m = min_tmp<minimal[t]?sel_m:m[t];
         min_tmp = min_tmp<minimal[t]?min_tmp:minimal[t];
     }
     *min_out = min_tmp;
@@ -111,7 +111,6 @@ vectorAdd_train2d(const float *vec, const float *w, const int *y,
 void cuda_train1(struct pars* pars_p){
     size_t size = nums * sizeof(float);
     cuda_checker(cudaMemcpy(d_w, w, size, cudaMemcpyHostToDevice));
-    float err1,err2,sum_w,err;
     int cur_j = 0,cur_theta = 0,cur_m = 0;
     float cur_min = 100000.0;
     for (int j = 0;j<cols;j++){
@@ -239,7 +238,8 @@ struct pars* AdaBoost(int B,float *alpha){
     for (int b=0;b<B;b++){
         struct pars pars;
         //train(&pars);
-        cuda_train(&pars);
+        //cuda_train(&pars);
+        cuda_train1(&pars);
         // label = classify(X,pars)
         float *vec = usps[pars.return_j];
         float err = 0.0,w_sum = 0.0;
