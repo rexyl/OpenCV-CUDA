@@ -100,9 +100,9 @@ vectorAdd_train2d(const float *vec, const float *w, const int *y,
     int cur_i = -1, sel_m = 0;
     for (int t = 0; t < nums; ++t)
     {
-        min_tmp = min_tmp<minimal[t]?min_tmp:minimal[t];
         cur_i = min_tmp<minimal[t]?cur_i:t;
         sel_m = min_tmp<minimal[t]?m:m[t];
+        min_tmp = min_tmp<minimal[t]?min_tmp:minimal[t];
     }
     *min_out = min_tmp;
     *sel_m_out = sel_m;
@@ -123,10 +123,10 @@ void cuda_train1(struct pars* pars_p){
         dim3 grid ((nums+15)/16,(nums+15)/16);
 
         float *min_out;
-        cuda_checker(cudaMalloc(min_out,sizeof(float)));
+        cuda_checker(cudaMalloc((void **)&min_out,sizeof(float)));
         int *cur_i_out,*sel_m_out;
-        cuda_checker(cudaMalloc(cur_i_out,sizeof(int)));
-        cuda_checker(cudaMalloc(sel_m_out,sizeof(int)));
+        cuda_checker(cudaMalloc((void **)&cur_i_out,sizeof(int)));
+        cuda_checker(cudaMalloc((void **)&sel_m_out,sizeof(int)));
         vectorAdd_train2d<<<grid,block>>>(d_vec,d_w,d_y,min_out,cur_i_out,sel_m_out,nums);
         
         cuda_checker(cudaMemcpy(&minimal, min_out, sizeof(float), cudaMemcpyDeviceToHost));
