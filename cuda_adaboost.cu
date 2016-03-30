@@ -4,7 +4,7 @@
 #include <time.h>
 #include <math.h>
 #include <cuda_runtime.h>
-#define nums 10000
+#define nums 5000
 #define cols 256
 //int nums = 200,cols = 256;
 float **usps;
@@ -333,7 +333,7 @@ int main(){
     float *alpha = (float *)malloc(sizeof(float)*5);;
     int *c_hat;
     ap = AdaBoost(5,alpha);
-    //c_hat = agg_class(alpha,ap,5);
+    c_hat = agg_class(alpha,ap,5);
     end = clock();
     time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
     for (int i = 0; i < 5; ++i)
