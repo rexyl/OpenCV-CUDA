@@ -104,12 +104,11 @@ vectorAdd_train2d(const float *vec, const float *w, const int *y,
     __syncthreads();
     if (z == 0 && i < numElements)
     {
-        printf("i is %d\n",i );
-        for (int t = 0; t < nums; ++t)
-        {
-            printf("mini:%f\n",minimal[t]);
-        }
-        printf("\n");
+        printf("1\n");
+        // for (int t = 0; t < nums; ++t)
+        // {
+        //     printf("mini:%f\n",minimal[t]);
+        // }
         // float min_tmp = 100000.0;
         // int cur_i = -1, sel_m = 0;
         // for (int t = 0; t < nums; ++t)
@@ -328,7 +327,6 @@ int main(){
     cuda_checker(cudaMalloc((void **)&d_vec, size));
     cuda_checker(cudaMalloc((void **)&d_y, nums*sizeof(int)));
 
-    printf("Copy input data from the host memory to the CUDA device\n");
     cuda_checker(cudaMemcpy(d_y, y, sizeof(int)*nums, cudaMemcpyHostToDevice));
 
     // Launch the Vector Add CUDA Kernel
@@ -362,7 +360,7 @@ int main(){
     // {
     //     printf("%d,%f,%d,%f\n",ap[i].return_j,ap[i].theta,ap[i].return_m,alpha[i]);    
     // }
-    printf("time is %f\n",time_spent);
+    //printf("time is %f\n",time_spent);
     for(int j=0;j<cols;j++){
         free(usps[j]);
     }
