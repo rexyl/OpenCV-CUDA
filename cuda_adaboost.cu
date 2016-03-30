@@ -4,7 +4,7 @@
 #include <time.h>
 #include <math.h>
 #include <cuda_runtime.h>
-#define nums 2000
+#define nums 200
 #define cols 256
 //int nums = 200,cols = 256;
 float **usps;
@@ -83,6 +83,9 @@ vectorAdd_train2d(const float *vec, const float *w, const int *y,
         sum1[z] = w[z] * ((vec[z]<=boundary) ^ (y[z]==-1));
         sum2[z] = w[z] * ((vec[z]<=boundary) ^ (y[z]==1));
     }
+    else{
+        return;
+    }
     __syncthreads();
     float tmp1 = 0.0 , tmp2 = 0.0 , tmp3 = 0.0;
     float err1,err2;
@@ -107,7 +110,6 @@ vectorAdd_train2d(const float *vec, const float *w, const int *y,
     *min_out = min_tmp;
     *sel_m_out = sel_m;
     *cur_i_out = cur_i;
-    printf("min_tmp is %f\n",min_tmp);
 }
 void cuda_train1(struct pars* pars_p){
     size_t size = nums * sizeof(float);
