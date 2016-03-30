@@ -29,8 +29,7 @@ void cuda_checker(cudaError_t err){
 }
 
 __global__ void
-vectorAdd(const float *A, const float *B, float *C, int numElements)
-{
+vectorAdd(const float *A, const float *B, float *C, int numElements){
     __shared__ float sum[nums];
     int i = blockDim.x * blockIdx.x + threadIdx.x;
     if (i < numElements)
@@ -69,6 +68,82 @@ vectorAdd_train(const float *vec, const float *w, const int *y,
     *sum_w = tmp3;
 }
 
+__global__ void
+vectorAdd_train2d(const float *vec, const float *w, const int *y,
+    float *min_out,int * cur_i_out,int * sel_m_out,int numElements){
+    __shared__ float sum1[nums];
+    __shared__ float sum2[nums];
+    __shared__ float minimal[nums];
+    __shared__ int m[nums];
+    int i = blockDim.y * blockIdx.y + threadIdx.y;
+    int z = blockDim.x * blockIdx.x + threadIdx.x;
+    float boundary = vec[i];
+    if (z < numElements && i < numElements)
+    {
+        sum1[z] = w[z] * ((vec[z]<=boundary) ^ (y[z]==-1));
+        sum2[z] = w[z] * ((vec[z]<=boundary) ^ (y[z]==1));
+    }
+    __syncthreads();
+    float tmp1 = 0.0 , tmp2 = 0.0 , tmp3 = 0.0;
+    float err1,err2;
+    for (int t = 0; t < nums; ++t){
+        tmp1+=sum1[t];
+        tmp2+=sum2[t];
+        tmp3+=w[t];
+    }
+    err1 = tmp1/tmp3;
+    err2 = tmp2/tmp3;
+    minimal[i] = err1<err2?err1:err2;
+    m[i] = err1<err2?1:-1;
+    __syncthreads();
+    float min_tmp = 100000.0;
+    int cur_i = -1, sel_m = 0;
+    for (int t = 0; t < nums; ++t)
+    {
+        min_tmp = min_tmp<minimal[t]?min_tmp:minimal[t];
+        cur_i = min_tmp<minimal[t]?cur_i:t;
+        sel_m = min_tmp<minimal[t]?m:m[t];
+    }
+    *min_out = min_tmp;
+    *sel_m_out = sel_m;
+    *cur_i_out = cur_i;
+}
+void cuda_train1(struct pars* pars_p){
+    size_t size = nums * sizeof(float);
+    cuda_checker(cudaMemcpy(d_w, w, size, cudaMemcpyHostToDevice));
+    float err1,err2,sum_w,err;
+    int cur_j = 0,cur_theta = 0,cur_m = 0;
+    float cur_min = 100000.0;
+    for (int j = 0;j<cols;j++){
+        float *vec = usps[j];
+        cuda_checker(cudaMemcpy(d_vec, vec, size, cudaMemcpyHostToDevice));
+        float minimal = 100000.0;
+        int cur_i = 0,sel_m= 0;
+        dim3 block(16,16);
+        dim3 grid ((nums+15)/16,(nums+15)/16);
+
+        float *min_out;
+        cuda_checker(cudaMalloc(min_out,sizeof(float)));
+        int *cur_i_out,*sel_m_out;
+        cuda_checker(cudaMalloc(cur_i_out,sizeof(int)));
+        cuda_checker(cudaMalloc(sel_m_out,sizeof(int)));
+        vectorAdd_train2d<<<grid,block>>>(d_vec,d_w,d_y,min_out,cur_i_out,sel_m_out,nums);
+        
+        cuda_checker(cudaMemcpy(&minimal, min_out, sizeof(float), cudaMemcpyDeviceToHost));
+        cuda_checker(cudaMemcpy(&cur_i, cur_i_out, sizeof(int), cudaMemcpyDeviceToHost));
+        cuda_checker(cudaMemcpy(&sel_m, sel_m_out, sizeof(int), cudaMemcpyDeviceToHost));
+        if(minimal<cur_min){
+            cur_min = minimal;
+            cur_j = j;
+            cur_theta = cur_i;
+            cur_m = sel_m;
+        }
+  }
+  pars_p->return_j = cur_j;
+  pars_p->theta = usps[cur_j][cur_theta];
+  pars_p->return_m = cur_m;
+  return;
+}
 void cuda_train(struct pars* pars_p){
     size_t size = nums * sizeof(float);
     cuda_checker(cudaMemcpy(d_w, w, size, cudaMemcpyHostToDevice));
@@ -83,8 +158,6 @@ void cuda_train(struct pars* pars_p){
         for(int i=0;i<nums;i++){
             float boundary = vec[i];
             int m = 0;
-            //float err = 0.0,err1 = 0.0,err2 = 0.0,sum_w = 0;
-
             int threadsPerBlock = 256;
             int blocksPerGrid =(nums + threadsPerBlock - 1) / threadsPerBlock;
             vectorAdd_train<<<blocksPerGrid, threadsPerBlock>>>(d_vec, d_w, d_y,
@@ -105,17 +178,16 @@ void cuda_train(struct pars* pars_p){
                 sel_m = m;
             }
         }
-    if(minimal<cur_min){
-        cur_min = minimal;
-        cur_j = j;
-        cur_theta = cur_i;
-        cur_m = sel_m;
-    }
+        if(minimal<cur_min){
+            cur_min = minimal;
+            cur_j = j;
+            cur_theta = cur_i;
+            cur_m = sel_m;
+        }
   }
   pars_p->return_j = cur_j;
   pars_p->theta = usps[cur_j][cur_theta];
   pars_p->return_m = cur_m;
-
   return;
 }
 
