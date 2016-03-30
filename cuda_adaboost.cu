@@ -96,7 +96,7 @@ vectorAdd_train2d(const float *vec, const float *w, const int *y,
     }
     err1 = tmp1/tmp3;
     err2 = tmp2/tmp3;
-    printf("err1 is %f,err2 is %f\n",err1,err2 );
+    //printf("err1 is %f,err2 is %f\n",err1,err2 );
     minimal[i] = err1<err2?err1:err2;
     m[i] = err1<err2?1:-1;
     __syncthreads();
@@ -107,6 +107,7 @@ vectorAdd_train2d(const float *vec, const float *w, const int *y,
         int cur_i = -1, sel_m = 0;
         for (int t = 0; t < nums; ++t)
         {
+            printf("min_tmp:%f,minimal[t]:%f\n",min_tmp,minimal[t] );
             cur_i = min_tmp<minimal[t]?cur_i:t;
             sel_m = min_tmp<minimal[t]?sel_m:m[t];
             min_tmp = min_tmp<minimal[t]?min_tmp:minimal[t];
@@ -344,14 +345,17 @@ int main(){
     struct pars* ap;
     float *alpha = (float *)malloc(sizeof(float)*5);;
     int *c_hat;
-    ap = AdaBoost(5,alpha);
-    c_hat = agg_class(alpha,ap,5);
+    //ap = AdaBoost(5,alpha);
+    //c_hat = agg_class(alpha,ap,5);
+    struct pars pars;
+    cuda_train1(&pars);
+    
     end = clock();
     time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-    for (int i = 0; i < 5; ++i)
-    {
-        printf("%d,%f,%d,%f\n",ap[i].return_j,ap[i].theta,ap[i].return_m,alpha[i]);    
-    }
+    // for (int i = 0; i < 5; ++i)
+    // {
+    //     printf("%d,%f,%d,%f\n",ap[i].return_j,ap[i].theta,ap[i].return_m,alpha[i]);    
+    // }
     printf("time is %f\n",time_spent);
     for(int j=0;j<cols;j++){
         free(usps[j]);
