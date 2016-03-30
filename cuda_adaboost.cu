@@ -221,7 +221,7 @@ void train(struct pars* pars_p){
         cur_i = i;
         sel_m = m;
       }
-    }8
+    }
     if(minimal<cur_min){
       cur_min = minimal;
       cur_j = j;
