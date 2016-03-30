@@ -166,8 +166,8 @@ struct pars* AdaBoost(int B,float *alpha){
     struct pars* allPars = (struct pars*)malloc(sizeof(struct pars)*B);
     for (int b=0;b<B;b++){
         struct pars pars;
-        train(&pars);
-        //cuda_train(&pars);
+        //train(&pars);
+        cuda_train(&pars);
         // label = classify(X,pars)
         float *vec = usps[pars.return_j];
         float err = 0.0,w_sum = 0.0;
