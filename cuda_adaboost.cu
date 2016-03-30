@@ -71,8 +71,8 @@ vectorAdd_train(const float *vec, const float *w, const int *y,
 __global__ void
 vectorAdd_train2d(const float *vec, const float *w, const int *y,
     float *min_out,int * cur_i_out,int * sel_m_out,int numElements){
-    __shared__ float sum1[nums];
-    __shared__ float sum2[nums];
+    float sum1[nums];    //err1[]
+    float sum2[nums];    //err2[]
     __shared__ float minimal[nums];
     __shared__ int m[nums];
     int i = blockDim.y * blockIdx.y + threadIdx.y;
@@ -221,7 +221,7 @@ void train(struct pars* pars_p){
         cur_i = i;
         sel_m = m;
       }
-    }
+    }8
     if(minimal<cur_min){
       cur_min = minimal;
       cur_j = j;
