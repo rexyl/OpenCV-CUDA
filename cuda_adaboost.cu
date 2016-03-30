@@ -143,6 +143,7 @@ void cuda_train1(struct pars* pars_p){
   pars_p->return_m = cur_m;
   return;
 }
+/*
 void cuda_train(struct pars* pars_p){
     size_t size = nums * sizeof(float);
     cuda_checker(cudaMemcpy(d_w, w, size, cudaMemcpyHostToDevice));
@@ -189,7 +190,7 @@ void cuda_train(struct pars* pars_p){
   pars_p->return_m = cur_m;
   return;
 }
-
+*/
 void train(struct pars* pars_p){
   int cur_j = 0,cur_theta = 0,cur_m = 0;
   float cur_min = 100000.0;
@@ -302,9 +303,9 @@ int main(){
     int numElements = nums;
     size_t size = numElements * sizeof(float);
     cuda_checker(cudaMalloc((void **)&d_w, size));
-    cuda_checker(cudaMalloc((void **)&d_sum_w, sizeof(float)));
-    cuda_checker(cudaMalloc((void **)&d_err1, sizeof(float)));
-    cuda_checker(cudaMalloc((void **)&d_err2, sizeof(float)));
+    //cuda_checker(cudaMalloc((void **)&d_sum_w, sizeof(float)));
+    //cuda_checker(cudaMalloc((void **)&d_err1, sizeof(float)));
+    //cuda_checker(cudaMalloc((void **)&d_err2, sizeof(float)));
     cuda_checker(cudaMalloc((void **)&d_vec, size));
     cuda_checker(cudaMalloc((void **)&d_y, nums*sizeof(int)));
 
@@ -351,9 +352,9 @@ int main(){
     free(c_hat);
 
     cuda_checker(cudaFree(d_w));
-    cuda_checker(cudaFree(d_sum_w));
-    cuda_checker(cudaFree(d_err1));
-    cuda_checker(cudaFree(d_err2));
+    //cuda_checker(cudaFree(d_sum_w));
+    //cuda_checker(cudaFree(d_err1));
+    //cuda_checker(cudaFree(d_err2));
     cuda_checker(cudaFree(d_vec));
     cuda_checker(cudaFree(d_y));
     cuda_checker(cudaDeviceReset());
