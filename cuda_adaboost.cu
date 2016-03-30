@@ -87,18 +87,20 @@ vectorAdd_train2d(const float *vec, const float *w, const int *y,
         return;
     }
     __syncthreads();
-    float tmp1 = 0.0 , tmp2 = 0.0 , tmp3 = 0.0;
-    float err1,err2;
-    for (int t = 0; t < nums; ++t){
-        tmp1+=sum1[t];
-        tmp2+=sum2[t];
-        tmp3+=w[t];
+    if (z < numElements && i < numElements){
+        float tmp1 = 0.0 , tmp2 = 0.0 , tmp3 = 0.0;
+        float err1,err2;
+        for (int t = 0; t < nums; ++t){
+            tmp1+=sum1[t];
+            tmp2+=sum2[t];
+            tmp3+=w[t];
+        }
+        err1 = tmp1/tmp3;
+        err2 = tmp2/tmp3;
+        //printf("err1 is %f,err2 is %f\n",err1,err2 );
+        minimal[i] = err1<err2?err1:err2;
+        m[i] = err1<err2?1:-1;
     }
-    err1 = tmp1/tmp3;
-    err2 = tmp2/tmp3;
-    //printf("err1 is %f,err2 is %f\n",err1,err2 );
-    minimal[i] = err1<err2?err1:err2;
-    m[i] = err1<err2?1:-1;
     __syncthreads();
     if (z == 0)
     {
@@ -349,7 +351,7 @@ int main(){
     //c_hat = agg_class(alpha,ap,5);
     struct pars pars;
     cuda_train1(&pars);
-    
+
     end = clock();
     time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
     // for (int i = 0; i < 5; ++i)
@@ -364,8 +366,8 @@ int main(){
     free(w);
     free(y);
     free(alpha);
-    free(ap);
-    free(c_hat);
+    //free(ap);
+    //free(c_hat);
 
     cuda_checker(cudaFree(d_w));
     //cuda_checker(cudaFree(d_sum_w));
