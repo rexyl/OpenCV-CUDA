@@ -4,7 +4,7 @@
 #include <time.h>
 #include <math.h>
 #include <cuda_runtime.h>
-#define nums 200
+#define nums 2000
 #define cols 256
 //int nums = 200,cols = 256;
 float **usps;
