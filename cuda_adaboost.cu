@@ -110,6 +110,7 @@ vectorAdd_train2d(const float *vec, const float *w, const int *y,
     *min_out = min_tmp;
     *sel_m_out = sel_m;
     *cur_i_out = cur_i;
+    printf("min_out is %f,sel_m_out %d,cur_i_out %d\n",min_tmp,sel_m,cur_i);
 }
 void cuda_train1(struct pars* pars_p){
     size_t size = nums * sizeof(float);
