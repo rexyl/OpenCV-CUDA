@@ -104,20 +104,24 @@ vectorAdd_train2d(const float *vec, const float *w, const int *y,
     __syncthreads();
     if (z == 0)
     {
-        //printf("I am in z0\n");
-        float min_tmp = 100000.0;
-        int cur_i = -1, sel_m = 0;
+        printf("i is %d\n",i );
         for (int t = 0; t < nums; ++t)
         {
-            printf("min_tmp:%f,minimal[t]:%f\n",min_tmp,minimal[t] );
-            cur_i = min_tmp<minimal[t]?cur_i:t;
-            sel_m = min_tmp<minimal[t]?sel_m:m[t];
-            min_tmp = min_tmp<minimal[t]?min_tmp:minimal[t];
+            printf("mini:%f\n",minimal[t]);
         }
-        *min_out = min_tmp;
-        *sel_m_out = sel_m;
-        *cur_i_out = cur_i;
-        //printf("min_out is %f,sel_m_out %d,cur_i_out %d\n",min_tmp,sel_m,cur_i);
+        printf("\n");
+        // float min_tmp = 100000.0;
+        // int cur_i = -1, sel_m = 0;
+        // for (int t = 0; t < nums; ++t)
+        // {
+        //     //printf("min_tmp:%f,minimal[t]:%f\n",min_tmp,minimal[t] );
+        //     cur_i = min_tmp<minimal[t]?cur_i:t;
+        //     sel_m = min_tmp<minimal[t]?sel_m:m[t];
+        //     min_tmp = min_tmp<minimal[t]?min_tmp:minimal[t];
+        // }
+        // *min_out = min_tmp;
+        // *sel_m_out = sel_m;
+        // *cur_i_out = cur_i;
     }
     
     //printf("min_out is %f,sel_m_out %d,cur_i_out %d\n",min_tmp,sel_m,cur_i);
