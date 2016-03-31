@@ -86,7 +86,7 @@ int main(){
     int *d_x = NULL;
     cuda_checker(cudaMemcpy(d_x, x, sizeof(int)*nums, cudaMemcpyHostToDevice));
     cuda_kthsmall<<<(nums + 256 - 1) / 256, 256>>>(d_x,3);
-    cuda_free(d_x);
+    cuda_checker(cudaFree(d_x));
     free(x);
     cuda_checker(cudaDeviceReset());
     return 0;
