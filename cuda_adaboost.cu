@@ -133,7 +133,7 @@ void cuda_train1(struct pars* pars_p){
         cuda_checker(cudaMemcpy(d_vec, vec, size, cudaMemcpyHostToDevice));
         float minimal = 100000.0;
         int cur_i = 0,sel_m= 0;
-        dim3 block(nums,nums);
+        dim3 block(200,200);
         dim3 grid (1,1);
 
         float *min_out;
