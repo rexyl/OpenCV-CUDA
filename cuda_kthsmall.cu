@@ -46,9 +46,9 @@ int kthSmallest(int arr[], int l, int r, int k){
     // If k is more than number of elements in array
     return INT_MAX;
 }
-void cuda_checker(cudaError_t err){
+void cuda_checker(cudaError_t err,int i){
     if (err != cudaSuccess){
-        fprintf(stderr, "Failed to allocate device(error code %s)!\n", cudaGetErrorString(err));
+        fprintf(stderr, "Failed to allocate device(error code %s and %d)!\n", cudaGetErrorString(err),i);
         exit(EXIT_FAILURE);
     }
 }
@@ -84,10 +84,10 @@ int main(){
     printf("\n");
     printf("%d\n", kthSmallest(x,0,nums-1,3));
     int *d_x = NULL;
-    cuda_checker(cudaMemcpy(d_x, x, sizeof(int)*nums, cudaMemcpyHostToDevice));
+    cuda_checker(cudaMemcpy(d_x, x, sizeof(int)*nums, cudaMemcpyHostToDevice),0);
     cuda_kthsmall<<<(nums + 256 - 1) / 256, 256>>>(d_x,3);
-    cuda_checker(cudaFree(d_x));
+    cuda_checker(cudaFree(d_x),1);
     free(x);
-    cuda_checker(cudaDeviceReset());
+    cuda_checker(cudaDeviceReset(),2);
     return 0;
 }
