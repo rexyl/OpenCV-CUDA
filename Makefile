@@ -220,7 +220,7 @@ endif
 # Target rules
 all: build
 
-build: cuda_adaboost
+build: cuda_kthsmall
 
 check.deps:
 ifeq ($(SAMPLE_ENABLED),0)
@@ -229,19 +229,19 @@ else
 	@echo "Sample is ready - all dependencies have been met"
 endif
 
-cuda_adaboost.o:cuda_adaboost.cu
+cuda_kthsmall.o:cuda_kthsmall.cu
 	$(EXEC) $(NVCC) $(INCLUDES) $(ALL_CCFLAGS) $(GENCODE_FLAGS) -o $@ -c $<
 
-cuda_adaboost: cuda_adaboost.o
+cuda_kthsmall: cuda_kthsmall.o
 	$(EXEC) $(NVCC) $(ALL_LDFLAGS) $(GENCODE_FLAGS) -o $@ $+ $(LIBRARIES)
 	$(EXEC) mkdir -p ../../bin/$(TARGET_ARCH)/$(TARGET_OS)/$(BUILD_TYPE)
 	$(EXEC) cp $@ ../../bin/$(TARGET_ARCH)/$(TARGET_OS)/$(BUILD_TYPE)
 
 run: build
-	$(EXEC) ./cuda_adaboost
+	$(EXEC) ./cuda_kthsmall
 
 clean:
-	rm -f cuda_adaboost cuda_adaboost.o
-	rm -rf ../../bin/$(TARGET_ARCH)/$(TARGET_OS)/$(BUILD_TYPE)/cuda_adaboost
+	rm -f cuda_kthsmall cuda_kthsmall.o
+	rm -rf ../../bin/$(TARGET_ARCH)/$(TARGET_OS)/$(BUILD_TYPE)/cuda_kthsmall
 
 clobber: clean
