@@ -4,7 +4,7 @@
 #include <time.h>
 #include <math.h>
 #include <cuda_runtime.h>
-#define nums 200
+#define nums 20
 #define cols 256
 //int nums = 200,cols = 256;
 float **usps;
@@ -134,7 +134,7 @@ void cuda_train1(struct pars* pars_p){
         float minimal = 100000.0;
         int cur_i = 0,sel_m= 0;
         dim3 block(16,16);
-        dim3 grid (200,200);
+        dim3 grid ((nums+15)/16,(nums+15)/16);
 
         float *min_out;
         cuda_checker(cudaMalloc((void **)&min_out,sizeof(float)));
