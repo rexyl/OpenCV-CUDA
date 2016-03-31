@@ -85,6 +85,6 @@ int main(){
     printf("%d\n", kthSmallest(x,0,nums-1,3));
     int *d_x = NULL;
     cuda_checker(cudaMemcpy(d_x, x, sizeof(int)*nums, cudaMemcpyHostToDevice));
-    cuda_kthsmall<<<(nums + 256 - 1) / 256, 256>>>(d_x,k);
+    cuda_kthsmall<<<(nums + 256 - 1) / 256, 256>>>(d_x,3);
     return 0;
 }
