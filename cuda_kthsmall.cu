@@ -63,7 +63,7 @@ cuda_kthsmall(const int *x,const int k){
 	    	upper_sum += (pivot>x[i]);
 	    	down_sum += (pivot>=x[i]);
 	    }
-	    if (k<=down_sum && k>=upper_sum)
+	    if (k<=down_sum && k>upper_sum)
 	    {
 	    	printf("Found, %d\n",pivot);
 	    }
