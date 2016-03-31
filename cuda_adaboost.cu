@@ -161,7 +161,7 @@ void cuda_train1(struct pars* pars_p){
   //printf("%d,%f,%d",cur_j,pars_p->theta, cur_m);
   return;
 }
-/*
+
 void cuda_train(struct pars* pars_p){
     size_t size = nums * sizeof(float);
     cuda_checker(cudaMemcpy(d_w, w, size, cudaMemcpyHostToDevice));
@@ -208,7 +208,7 @@ void cuda_train(struct pars* pars_p){
   pars_p->return_m = cur_m;
   return;
 }
-*/
+
 void train(struct pars* pars_p){
   int cur_j = 0,cur_theta = 0,cur_m = 0;
   float cur_min = 100000.0;
