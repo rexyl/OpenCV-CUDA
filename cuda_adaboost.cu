@@ -96,8 +96,8 @@ vectorAdd_train2d(const float *vec, const float *w, const int *y,
             tmp2+=sum2[t];
             tmp3+=w[t];
         }
-        err1 = tmp1/1.0;
-        err2 = tmp2/1.0;
+        err1 = tmp1/tmp3;
+        err2 = tmp2/tmp3;
         printf("err1 is %f,err2 is %f\n",err1,err2 );
         minimal[i] = err1<err2?err1:err2;
         m[i] = err1<err2?1:-1;
@@ -256,10 +256,9 @@ struct pars* AdaBoost(int B,float *alpha){
     struct pars* allPars = (struct pars*)malloc(sizeof(struct pars)*B);
     for (int b=0;b<B;b++){
         struct pars pars;
-        cuda_train1(&pars);
-        //train(&pars);
+        //cuda_train1(&pars);
+        train(&pars);
         //cuda_train(&pars);
-        // label = classify(X,pars)
         float *vec = usps[pars.return_j];
         float err = 0.0,w_sum = 0.0;
         for(int z =0;z<nums;z++){
@@ -345,21 +344,22 @@ int main(){
     /*****************************/
     clock_t begin, end;
     double time_spent;
-    begin = clock();
+    
     struct pars* ap;
     float *alpha = (float *)malloc(sizeof(float)*5);;
     int *c_hat;
-    //ap = AdaBoost(5,alpha);
+    begin = clock();
+    ap = AdaBoost(5,alpha);
     //c_hat = agg_class(alpha,ap,5);
-    struct pars pars;
-    cuda_train1(&pars);
+    //struct pars pars;
+    //cuda_train1(&pars);
     end = clock();
     time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-    // for (int i = 0; i < 5; ++i)
-    // {
-    //     printf("%d,%f,%d,%f\n",ap[i].return_j,ap[i].theta,ap[i].return_m,alpha[i]);    
-    // }
-    //printf("time is %f\n",time_spent);
+    for (int i = 0; i < 5; ++i)
+    {
+        printf("%d,%f,%d,%f\n",ap[i].return_j,ap[i].theta,ap[i].return_m,alpha[i]);    
+    }
+    printf("time is %f\n",time_spent);
     for(int j=0;j<cols;j++){
         free(usps[j]);
     }
