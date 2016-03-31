@@ -134,7 +134,7 @@ void cuda_train1(struct pars* pars_p){
         float minimal = 100000.0;
         int cur_i = 0,sel_m= 0;
         dim3 block(200,200);
-        dim3 grid (1,1);
+        dim3 grid (200,200);
 
         float *min_out;
         cuda_checker(cudaMalloc((void **)&min_out,sizeof(float)));
