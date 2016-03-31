@@ -88,7 +88,7 @@ vectorAdd_train2d(const float *vec, const float *w, const int *y,
         return;
     }
     __syncthreads();
-    if (z < numElements && i < numElements){
+    if (z == 0 && i < numElements){
         float tmp1 = 0.0 , tmp2 = 0.0 , tmp3 = 0.0;
         float err1,err2;
         for (int t = 0; t < nums; ++t){
