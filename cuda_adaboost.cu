@@ -77,6 +77,7 @@ vectorAdd_train2d(const float *vec, const float *w, const int *y,
     __shared__ int m[nums];
     int i = blockDim.y * blockIdx.y + threadIdx.y;
     int z = blockDim.x * blockIdx.x + threadIdx.x;
+    printf("[%d,%d]\n",i,z );
     float boundary = vec[i];
     if (z < numElements && i < numElements)
     {
