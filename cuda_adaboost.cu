@@ -257,8 +257,8 @@ struct pars* AdaBoost(int B,float *alpha){
     for (int b=0;b<B;b++){
         struct pars pars;
         //cuda_train1(&pars);
-        train(&pars);
-        //cuda_train(&pars);
+        //train(&pars);
+        cuda_train(&pars);
         float *vec = usps[pars.return_j];
         float err = 0.0,w_sum = 0.0;
         for(int z =0;z<nums;z++){
@@ -350,7 +350,7 @@ int main(){
     int *c_hat;
     begin = clock();
     ap = AdaBoost(5,alpha);
-    //c_hat = agg_class(alpha,ap,5);
+    c_hat = agg_class(alpha,ap,5);
     //struct pars pars;
     //cuda_train1(&pars);
     end = clock();
