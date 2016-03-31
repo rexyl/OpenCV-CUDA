@@ -84,10 +84,13 @@ int main(){
     printf("\n");
     printf("%d\n", kthSmallest(x,0,nums-1,3));
     int *d_x = NULL;
-    cuda_checker(cudaMemcpy(d_x, x, sizeof(int)*nums, cudaMemcpyHostToDevice),0);
+    cuda_checker(cudaMalloc((void **)&d_x,sizeof(int)*nums));
+    int err_num = 0;
+    cuda_checker(cudaMemcpy(d_x, x, sizeof(int)*nums, cudaMemcpyHostToDevice),err_num++);
+
     cuda_kthsmall<<<(nums + 256 - 1) / 256, 256>>>(d_x,3);
-    cuda_checker(cudaFree(d_x),1);
+    cuda_checker(cudaFree(d_x),err_num++);
     free(x);
-    cuda_checker(cudaDeviceReset(),2);
+    cuda_checker(cudaDeviceReset(),err_num++);
     return 0;
 }
