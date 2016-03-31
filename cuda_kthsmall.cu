@@ -74,6 +74,7 @@ cuda_kthsmall(const int *x,const int k){
 int main(){
     int *x = (int*)malloc(sizeof(int)*nums);
     time_t t;
+    int err_num = 0;
     srand((unsigned) time(&t));
     
     for (int i = 0; i < nums; ++i)
@@ -85,7 +86,6 @@ int main(){
     printf("%d\n", kthSmallest(x,0,nums-1,3));
     int *d_x = NULL;
     cuda_checker(cudaMalloc((void **)&d_x,sizeof(int)*nums),err_num++);
-    int err_num = 0;
     cuda_checker(cudaMemcpy(d_x, x, sizeof(int)*nums, cudaMemcpyHostToDevice),err_num++);
 
     cuda_kthsmall<<<(nums + 256 - 1) / 256, 256>>>(d_x,3);
