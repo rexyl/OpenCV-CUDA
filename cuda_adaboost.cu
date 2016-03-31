@@ -104,10 +104,6 @@ vectorAdd_train2d(const float *vec, const float *w, const int *y,
     __syncthreads();
     if (z == 0 && i == 0)
     {
-        for (int t = 0; t < nums; ++t)
-        {
-            printf("mini:%f\n",minimal[t]);
-        }
         float min_tmp = 100000.0;
         int cur_i = -1, sel_m = 0;
         for (int t = 0; t < nums; ++t)
