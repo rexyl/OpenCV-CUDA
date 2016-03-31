@@ -120,9 +120,10 @@ vectorAdd_train2d(const float *vec, const float *w, const int *y,
         *min_out = min_tmp;
         *sel_m_out = sel_m;
         *cur_i_out = cur_i;
+        printf("min_out is %f,sel_m_out %d,cur_i_out %d\n",min_tmp,sel_m,cur_i);
     }
     
-    //printf("min_out is %f,sel_m_out %d,cur_i_out %d\n",min_tmp,sel_m,cur_i);
+    
 }
 
 void cuda_train1(struct pars* pars_p){
@@ -158,6 +159,7 @@ void cuda_train1(struct pars* pars_p){
   pars_p->return_j = cur_j;
   pars_p->theta = usps[cur_j][cur_theta];
   pars_p->return_m = cur_m;
+  //printf("%d,%f,%d",cur_j,pars_p->theta, cur_m);
   return;
 }
 /*
@@ -352,7 +354,6 @@ int main(){
     //c_hat = agg_class(alpha,ap,5);
     struct pars pars;
     cuda_train1(&pars);
-    printf("%f",pars.theta);
     end = clock();
     time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
     // for (int i = 0; i < 5; ++i)
