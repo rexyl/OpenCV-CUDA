@@ -98,10 +98,12 @@ vectorAdd_train2d(const float *vec, const float *w, const int *y,
         }
         err1 = tmp1/tmp3;
         err2 = tmp2/tmp3;
-        //printf("err1 is %f,err2 is %f\n",err1,err2 );
+        printf("err1 is %f,err2 is %f\n",err1,err2 );
         minimal[i] = err1<err2?err1:err2;
         m[i] = err1<err2?1:-1;
     }
+    else
+        return;
     __syncthreads();
     if (z == 0 && i == 0)
     {
@@ -117,7 +119,7 @@ vectorAdd_train2d(const float *vec, const float *w, const int *y,
         *min_out = min_tmp;
         *sel_m_out = sel_m;
         *cur_i_out = cur_i;
-        printf("min_out is %f,sel_m_out %d,cur_i_out %d\n",min_tmp,sel_m,cur_i);
+        //printf("min_out is %f,sel_m_out %d,cur_i_out %d\n",min_tmp,sel_m,cur_i);
     }
     
     
