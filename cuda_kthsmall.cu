@@ -5,7 +5,7 @@
 #include <cuda_runtime.h>
 #include <limits.h>
 
-#define nums 10
+#define nums 200
 
 void swap(int *a, int *b){
     int temp = *a;
