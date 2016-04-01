@@ -11,7 +11,8 @@ int cmpfunc (const void * a, const void * b){
    return ( *(int*)a - *(int*)b );
 }
 int kthSmallest(int arr[], int l, int r, int k){
-    return qsort(arr, nums, sizeof(int), cmpfunc);
+    qsort(arr, nums, sizeof(int), cmpfunc);
+    return arr[k];
 }
 
 void cuda_checker(cudaError_t err,int i){
