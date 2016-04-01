@@ -5,7 +5,7 @@
 #include <cuda_runtime.h>
 #include <limits.h>
 
-#define nums 200000
+#define nums 10
 
 void kthSmallest(int arr[], int k){
  	for (int i = 0; i < nums; ++i){
