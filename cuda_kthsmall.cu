@@ -5,7 +5,7 @@
 #include <cuda_runtime.h>
 #include <limits.h>
 
-#define nums 20000
+#define nums 200000
 
 void swap(int *a, int *b){
     int temp = *a;
@@ -82,9 +82,10 @@ int main(){
     for (int i = 0; i < nums; ++i)
     {
         x[i] = rand() % 1000;
-        printf("%d ",x[i]);
+        //printf("%d ",x[i]);
     }
     printf("\n");
+  
     begin = clock();
     printf("%d\n", kthSmallest(x,0,nums-1,3));
     end = clock();
