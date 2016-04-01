@@ -89,7 +89,7 @@ int main(){
     printf("%d\n", kthSmallest(x,0,nums-1,3));
     end = clock();
     time_spend = (double)(end - begin) / CLOCKS_PER_SEC;
-    printf("CPU cost %f\n", time_spent);
+    printf("CPU cost %f\n", time_spend);
 
     int *d_x = NULL;
     begin = clock();
