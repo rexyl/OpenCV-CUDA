@@ -7,7 +7,7 @@
 
 #define nums 200000
 
-int kthSmallest(int arr[], int k){
+void kthSmallest(int arr[], int k){
  	for (int i = 0; i < nums; ++i){
  		int upper_sum = 0,down_sum = 0,pivot = x[i];
  		for (int j = 0; j < nums; ++j){
@@ -18,7 +18,6 @@ int kthSmallest(int arr[], int k){
 	    	printf("Found, %d\n",pivot);
 	    }
  	}
-    return arr[k];
 }
 
 void cuda_checker(cudaError_t err,int i){
@@ -62,7 +61,7 @@ int main(){
     printf("\n");
   
     begin = clock();
-    printf("%d\n", kthSmallest(x,3));
+    kthSmallest(x,3);
     end = clock();
     time_spend = (double)(end - begin) / CLOCKS_PER_SEC;
     printf("CPU cost %f\n", time_spend);
