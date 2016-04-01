@@ -7,45 +7,13 @@
 
 #define nums 2000000
 
-void swap(int *a, int *b){
-    int temp = *a;
-    *a = *b;
-    *b = temp;
-}
-int partition(int arr[], int l, int r){
-    int x = arr[r], i = l;
-    for (int j = l; j <= r - 1; j++)
-    {
-        if (arr[j] <= x)
-        {
-            swap(&arr[i], &arr[j]);
-            i++;
-        }
-    }
-    swap(&arr[i], &arr[r]);
-    return i;
+int cmpfunc (const void * a, const void * b){
+   return ( *(int*)a - *(int*)b );
 }
 int kthSmallest(int arr[], int l, int r, int k){
-    // If k is smaller than number of elements in array
-    if (k > 0 && k <= r - l + 1)
-    {
-        // Partition the array around last element and get
-        // position of pivot element in sorted array
-        int pos = partition(arr, l, r);
-        
-        // If position is same as k
-        if (pos-l == k-1)
-            return arr[pos];
-        if (pos-l > k-1)  // If position is more, recur for left subarray
-            return kthSmallest(arr, l, pos-1, k);
-        
-        // Else recur for right subarray
-        return kthSmallest(arr, pos+1, r, k-pos+l-1);
-    }
-    
-    // If k is more than number of elements in array
-    return INT_MAX;
+    qsort(arr, nums, sizeof(int), cmpfunc);
 }
+
 void cuda_checker(cudaError_t err,int i){
     if (err != cudaSuccess){
         fprintf(stderr, "Failed to allocate device(error code %s and %d)!\n", cudaGetErrorString(err),i);
