@@ -13,10 +13,9 @@ void kthSmallest(int arr[], int k){
  		for (int j = 0; j < nums; ++j){
  			upper_sum += (pivot>arr[i]);
  			down_sum += (pivot>=arr[i]);
-
  		}
  		if (k<=down_sum && k>upper_sum){
-	    	printf("Found, %d\n",pivot);
+	    	//printf("Found, %d\n",pivot);
 	    }	
  	}
  	return;
@@ -41,7 +40,7 @@ cuda_kthsmall(const int *x,const int k){
 	    }
 	    if (k<=down_sum && k>upper_sum)
 	    {
-	    	printf("Found, %d\n",pivot);
+	    	//printf("Found, %d\n",pivot);
 	    }
     }
 }
