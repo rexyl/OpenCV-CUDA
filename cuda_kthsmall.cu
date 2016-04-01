@@ -9,15 +9,17 @@
 
 void kthSmallest(int arr[], int k){
  	for (int i = 0; i < nums; ++i){
- 		int upper_sum = 0,down_sum = 0,pivot = x[i];
+ 		int upper_sum = 0,down_sum = 0,pivot = arr[i];
  		for (int j = 0; j < nums; ++j){
  			upper_sum += (pivot>arr[i]);
  			down_sum += (pivot>=arr[i]);
+
  		}
  		if (k<=down_sum && k>upper_sum){
 	    	printf("Found, %d\n",pivot);
-	    }
+	    }	
  	}
+ 	return;
 }
 
 void cuda_checker(cudaError_t err,int i){
