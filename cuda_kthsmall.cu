@@ -74,6 +74,8 @@ cuda_kthsmall(const int *x,const int k){
 int main(){
     int *x = (int*)malloc(sizeof(int)*nums);
     time_t t;
+    clock_t begin,end;
+    double time_spend;
     int err_num = 0;
     srand((unsigned) time(&t));
     
@@ -83,13 +85,22 @@ int main(){
         printf("%d ",x[i]);
     }
     printf("\n");
+    begin = clock();
     printf("%d\n", kthSmallest(x,0,nums-1,3));
+    end = clock();
+    time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+    printf("CPU cost %f\n", time_spent);
+
     int *d_x = NULL;
+    begin = clock();
     cuda_checker(cudaMalloc((void **)&d_x,sizeof(int)*nums),err_num++);
     cuda_checker(cudaMemcpy(d_x, x, sizeof(int)*nums, cudaMemcpyHostToDevice),err_num++);
-
     cuda_kthsmall<<<(nums + 256 - 1) / 256, 256>>>(d_x,3);
     cuda_checker(cudaFree(d_x),err_num++);
+    end = clock();
+    time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+    printf("GPU cost %f\n", time_spent);
+
     free(x);
     cuda_checker(cudaDeviceReset(),err_num++);
     return 0;
