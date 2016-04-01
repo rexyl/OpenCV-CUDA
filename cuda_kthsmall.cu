@@ -99,7 +99,7 @@ int main(){
     cuda_checker(cudaFree(d_x),err_num++);
     end = clock();
     time_spend = (double)(end - begin) / CLOCKS_PER_SEC;
-    printf("GPU cost %f\n", time_spent);
+    printf("GPU cost %f\n", time_spend);
 
     free(x);
     cuda_checker(cudaDeviceReset(),err_num++);
