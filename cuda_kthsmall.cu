@@ -7,11 +7,17 @@
 
 #define nums 200000
 
-int cmpfunc (const void * a, const void * b){
-   return ( *(int*)a - *(int*)b );
-}
-int kthSmallest(int arr[], int l, int r, int k){
-    qsort(arr, nums, sizeof(int), cmpfunc);
+int kthSmallest(int arr[], int k){
+ 	for (int i = 0; i < nums; ++i){
+ 		int upper_sum = 0,down_sum = 0,pivot = x[i];
+ 		for (int j = 0; j < nums; ++j){
+ 			upper_sum += (pivot>arr[i]);
+ 			down_sum += (pivot>=arr[i]);
+ 		}
+ 		if (k<=down_sum && k>upper_sum){
+	    	printf("Found, %d\n",pivot);
+	    }
+ 	}
     return arr[k];
 }
 
@@ -56,7 +62,7 @@ int main(){
     printf("\n");
   
     begin = clock();
-    printf("%d\n", kthSmallest(x,0,nums-1,3));
+    printf("%d\n", kthSmallest(x,3));
     end = clock();
     time_spend = (double)(end - begin) / CLOCKS_PER_SEC;
     printf("CPU cost %f\n", time_spend);
