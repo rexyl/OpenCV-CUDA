@@ -5,13 +5,13 @@
 #include <cuda_runtime.h>
 #include <limits.h>
 
-#define nums 2000000
+#define nums 200000
 
 int cmpfunc (const void * a, const void * b){
    return ( *(int*)a - *(int*)b );
 }
 int kthSmallest(int arr[], int l, int r, int k){
-    qsort(arr, nums, sizeof(int), cmpfunc);
+    return qsort(arr, nums, sizeof(int), cmpfunc);
 }
 
 void cuda_checker(cudaError_t err,int i){
